@@ -1,0 +1,27 @@
+<root>
+    <BehaviorTree ID="ruto_loop">
+    <Sequence name="main">
+        <!-- 1つ目の辺を動く -->
+        <SetDestination name="yoko1" value="[()]"/>
+        <GoToPose name="yoko1"/>
+        <Sleep name="sleep1" time="[3]"/>
+        <!-- 2つ目の辺を動く -->
+        <!-- ここでマーカー探索する？ -->
+        <SetDestination name="tate1" value="[()]"/>
+        <GoToPose name="tate1"/>
+        <Sleep name="sleep2" time="[3]"/>
+        <!-- 3つ目の辺を動く -->
+        <SetDestination name="yoko2" value="[()]"/>
+        <GoToPose name="yoko2"/>
+        <Sleep name="sleep3" time="[3]"/>
+        <!-- 4つ目の辺を動く -->
+        <SetDestination name="tate2" value="[()]"/>
+        <GoToPose name="tate2"/>
+        <Sleep name="sleep4" time="[3]"/>
+        <!-- 最初の辺に戻り、スタート位置に動く -->
+        <SetDestination name="yoko3" value="[()]"/>
+        <GoToPose name="yoko3"/>
+        <Sleep name="sleep5" time="[3]"/>
+    </Sequence>
+    </BehaviorTree>
+</root>
