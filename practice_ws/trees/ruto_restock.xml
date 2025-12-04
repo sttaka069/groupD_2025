@@ -1,8 +1,0 @@
-<root>
-    <BehaviorTree ID="d_marker">
-    <Sequence name="main">
-        <SetDetector name="marker" func_name="marker.d_marker" id="1"/>
-        <GoToPose name="marker"/>
-    </Sequence>
-    </BehaviorTree>
-</root>
