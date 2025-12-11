@@ -2,26 +2,42 @@
     <BehaviorTree ID="ruto_loop">
     <Sequence name="main">
         <!-- 1つ目の辺を動く -->
-        <SetDestination name="yoko1" value="[(0, 3, 270)]"/>
-        <GoToPose name="yoko1"/>
-        <Sleep name="sleep1" time="[3]"/>
-        <!-- 2つ目の辺を動く -->
-        <!-- ここでマーカー探索する？ -->
-        <SetDestination name="tate1" value="[(4, 0, 0)]"/>
+        <SetDestination name="tate1" value="[(0, 3, 270)]"/>
         <GoToPose name="tate1"/>
+        <Sleep name="sleep1" time="[3]"/>
+        <!-- 2つ目の辺をid1マーカーのポイントまで動く -->
+        <SetDestination name="yoko1->id1" value="[(4, 0, 0)]"/>
+        <GoToPose name="yoko1"/>
         <Sleep name="sleep2" time="[3]"/>
-        <!-- 3つ目の辺を動く -->
-        <SetDestination name="yoko2" value="[(3, 3, 0)]"/>
+        <!-- ここから下にidの判別コード -->
+
+
+        <!-- 2つ目の辺をid2マーカーのポイントまで動く -->
+        <SetDestination name="yoko2->id2" value="[(3, 3, 0)]"/>
         <GoToPose name="yoko2"/>
         <Sleep name="sleep3" time="[3]"/>
-        <!-- 4つ目の辺を動く -->
-        <SetDestination name="tate2" value="[(0, 0, 0)]"/>
-        <GoToPose name="tate2"/>
-        <Sleep name="sleep4" time="[3]"/>
-        <!-- 最初の辺に戻り、スタート位置に動く
-        <SetDestination name="yoko3" value="[()]"/>
+        <!-- ここから下にidの判別コード -->
+
+
+        <!-- 2つ目の辺をid3マーカーのポイントまで動く -->
+        <SetDestination name="yoko3->id3" value="[(0, 0, 0)]"/>
         <GoToPose name="yoko3"/>
-        <Sleep name="sleep5" time="[3]"/> -->
+        <Sleep name="sleep4" time="[3]"/>
+        <!-- ここから下にidの判別コード -->
+
+        
+        <!-- 2つ目の辺を終点まで動く -->
+        <SetDestination name="yoko4" value="[()]"/>
+        <GoToPose name="yoko4"/>
+        <Sleep name="sleep5" time="[3]"/>
+        <!-- 3つ目の辺を終点まで動く -->
+        <SetDestination name="tate2" value="[()]"/>
+        <GoToPose name="tate2"/>
+        <Sleep name="sleep5" time="[3]"/>
+        <!-- 4つ目の辺からスタート位置まで動く -->
+        <SetDestination name="" value="[()]"/>
+        <GoToPose name=""/>
+        <Sleep name="sleep5" time="[3]"/>
     </Sequence>
     </BehaviorTree>
 </root>
