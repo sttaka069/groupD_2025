@@ -1,29 +1,32 @@
-<!-- <root>
-    <BehaviorTree ID="pick_up">
-    <Sequence name="main">
-        <Open name="gripper_open" />
-        <Pick name="pick_pose" />
-        <Close name="gripper_close" />
-        <ArmHome name="home"/>
-    </Sequence>
-    </BehaviorTree>
-</root> -->
-
 <root>
-    <BehaviorTree ID="pick_up">
-        <Sequence name="main">
-            <SetDetector name="set_det" func_name="my_dtcs.d_coke" id="None" /> <!--色検出版-->
-                                   <!-- func_name="検出機" -->
-            <!-- <SetDestination name="set_move_target" value="[(1.0, 0.0, 90)]" />
-            <GoToPose name="move_to_target" /> --> <!--座標にいく-->
-            <Watch name="detect_obj" />
+    <BehaviorTree ID="bt_catch_any_color">
+        <Sequence name="main_sequence">
+            
+            <Selector name="color_selector">
+                
+                <Sequence name="try_red">
+                    <SetDetector name="set_red" func_name="my_dtcs.d_coke" id="None" />
+                    <Watch name="detect_red" />
+                </Sequence>
+                
+                <Sequence name="try_blue">
+                    <SetDetector name="set_blue" func_name="my_dtcs.d_blue" id="None" />
+                    <Watch name="detect_blue" />
+                </Sequence>
+                
+                <Sequence name="try_green">
+                    <SetDetector name="set_green" func_name="my_dtcs.d_green" id="None" />
+                    <Watch name="detect_green" />
+                </Sequence>
+                
+            </Selector>
             <Open name="gripper_open" />
             <ReachObj name="approach_obj" />
             <Pick name="pick_pose" />
             <Fit2 name="fit" distance="[0.175]" />
-            <Shift name="shift" target="[0.175]"/>
             <Close name="gripper_close" />
             <ArmHome name="home"/>
+            
         </Sequence>
     </BehaviorTree>
 </root>
