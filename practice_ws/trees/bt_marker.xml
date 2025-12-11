@@ -1,0 +1,27 @@
+<root>
+    <BehaviorTree ID="bt_marker">
+        <Sequence name="sequence">
+            <FailureIsSuccess name = "main">
+                <Sequence name="sub_1">
+                    
+                    <!-- id_markerの検出器を配置  -->
+                    <SetDetector name="set marker_detector" func_name="marker.d_marker" id="[0]"/>
+                    <!-- markerを探す -->
+                    <JudgeWatch name="watch_marker judgewatch"/> 
+                    
+                    <SetDetector name="set marker_detector 1" func_name="marker.d_marker" id="[0]"/>
+                    <!-- 対象物との位置、距離を表示(取得)  -->
+                    <!-- GetObjFront name="get_marker"/-->
+                    <!-- 検出器を用いて対象物の前に移動  -->
+                    <!-- <GoToPose name="go_to_marker"/> -->
+                    <!--  -->        
+                </Sequence>
+            </FailureIsSuccess>
+            <FailureIsSuccess name = "sub_2">
+                <Sequence name="sub">
+                    <SetDetector name="set marker_detector 2" func_name="marker.d_marker" id="[0]"/>
+                </Sequence>
+            </FailureIsSuccess>
+        </Sequence>
+    </BehaviorTree>
+</root>
