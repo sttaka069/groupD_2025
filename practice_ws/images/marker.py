@@ -28,6 +28,7 @@ def d_marker(img, n: int):
 
     # detect and draw marker's information
     corners, ids, _ = aruco.detectMarkers(img, dictionary, parameters=parameters)
+    
     if n in np.ravel(ids) :
         index = np.where(ids == n)[0][0] #num_id が格納されているindexを抽出
         cornerUL = corners[index][0][0]
@@ -35,4 +36,6 @@ def d_marker(img, n: int):
         cornerBR = corners[index][0][2]
         cornerBL = corners[index][0][3]
         center = [ (cornerUL[0]+cornerBR[0])/2 , (cornerUL[1]+cornerBR[1])/2 ]
-    return tuple(center)
+        return tuple(center)
+    else:
+        return None
