@@ -1,32 +1,18 @@
 <root>
-    <BehaviorTree ID="bt_catch_any_color">
-        <Sequence name="main_sequence">
-            
-            <Selector name="color_selector">
-                
-                <Sequence name="try_red">
-                    <SetDetector name="set_red" func_name="my_dtcs.d_coke" id="None" />
-                    <Watch name="detect_red" />
-                </Sequence>
-                
-                <Sequence name="try_blue">
-                    <SetDetector name="set_blue" func_name="my_dtcs.d_blue" id="None" />
-                    <Watch name="detect_blue" />
-                </Sequence>
-                
-                <Sequence name="try_green">
-                    <SetDetector name="set_green" func_name="my_dtcs.d_green" id="None" />
-                    <Watch name="detect_green" />
-                </Sequence>
-                
-            </Selector>
-            <Open name="gripper_open" />
-            <ReachObj name="approach_obj" />
-            <Pick name="pick_pose" />
-            <Fit2 name="fit" distance="[0.175]" />
-            <Close name="gripper_close" />
-            <ArmHome name="home"/>
-            
-        </Sequence>
+    <BehaviorTree ID="bt_catch">
+    <Sequence name="main">
+        <SetDetector name="set coke_detector" func_name="my_dtcs.d_coke" id="None"/>
+        <Watch name="watch_coke"/>
+        <GetObjFront name="get_coke_front"/>
+        <GoToPose name="move_to_place_loc"/>
+        <ReachObj name="reach_coke" />
+        <Pick name="pick"/>
+        <ObjectLocation name="object_location"/>
+        <Shift name="shift" target="[0.175]"/>
+        <Sleep name="sleep" time="[3]"/>
+        <Fit2 name="fit2" distance="[0.175]"/>
+        <Close name="close"/>
+        <ArmHome name="home"/>
+    </Sequence>
     </BehaviorTree>
 </root>
