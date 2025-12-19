@@ -7,12 +7,12 @@
         <GoToPose name="move_to_place_loc"/>
         <ReachObj name="reach_coke" />
         <Pick name="pick"/>
-        <!-- <ObjectLocation name="object_location"/>
+        <ObjectLocation name="object_location"/>
         <Shift name="shift" target="[0.175]"/>
         <Sleep name="sleep" time="[3]"/>
         <Fit2 name="fit2" distance="[0.175]"/>
         <Close name="close"/>
-        <ArmHome name="home"/> -->
+        <ArmHome name="home"/>
     </Sequence>
     <Sequence name="ball">
         <SetDetector name="set ball_detector" func_name="my_dtcs.orange_ball" id="None"/>
@@ -21,11 +21,11 @@
         <GoToPose name="move_to_place_loc"/>
         <ReachObj name="reach_coke" />
         <Pick name="pick"/>
-        <!-- <ObjectLocation name="object_location"/>
+        <ObjectLocation name="object_location"/>
         <Shift name="shift" target="[0.175]"/>
         <Sleep name="sleep" time="[3]"/>
         <Fit2 name="fit2" distance="[0.175]"/>
-        <Close name="close"/> -->
+        <Close name="close"/>
         <ArmHome name="home"/>
     </Sequence>
     <Sequence name="cup">
@@ -35,12 +35,12 @@
         <GoToPose name="move_to_place_loc"/>
         <ReachObj name="reach_coke" />
         <Pick name="pick"/>
-        <!-- <ObjectLocation name="object_location"/>
+        <ObjectLocation name="object_location"/>
         <Shift name="shift" target="[0.175]"/>
         <Sleep name="sleep" time="[3]"/>
         <Fit2 name="fit2" distance="[0.175]"/>
         <Close name="close"/>
-        <ArmHome name="home"/> -->
+        <ArmHome name="home"/>
     </Sequence>
     </BehaviorTree>
 </root>
