@@ -6,7 +6,17 @@
                     <!-- id_markerの検出器を配置  -->
                     <SetDetector name="set marker_detector" func_name="marker.d_marker" id="[1]"/>
                     <!-- nav_pointの設定である程度aruco_id[1]が映る場所に調整 -->
-
+                    <SetDestination name="target_1.1" value="[(6.5,0,270)]"/>
+                    <GoToPose name="target_1.1"/>
+                    <SetDestination name="target_1.2" value="[(6.5,-1.1,180)]"/>
+                    <GoToPose name="target_1.2"/>
+                    <Sleep name="sleep1" time="[3]"/>
+                    <Watch name="watch_marker"/>
+                    <GetObjFront name="goto_marker"/>
+                   
+                    <SetDestination name="target_3" value="[(5.5,-2.25,180)]"/>
+                    <GoToPose name="target_3"/>
+                    
                     <!-- 角度を変えたらidが検出器に映る -->
 
                     <!-- GoObjFrontでid検出器を用いてaruco_id[1]前に移動 -->
@@ -14,13 +24,13 @@
                     <!-- 少し左に移動して右に回転、その後少し前進 -->
 
                     <!-- id_markerからobjectの判定に移るので、判定したいobjectの検出器をセット -->
-
+                    <SetDetector name="set coke_detector" func_name="my_dtcs.d_coke" id="None"/>
                     <!-- watchによるobjectの判定 -->
                     <JudgeWatch name="watch_marker judgewatch"/> 
                     <!-- id_markerの検出器を再配置(objectから在庫のid判定へ移行)して条件分岐の確認  この時点でTrueが通ります、在庫に移動して補充しましょう-->
-                    <SetDetector name="set marker_detector 1" func_name="marker.d_marker" id="[0]"/>
+                    <SetDetector name="set marker_detector 1" func_name="marker.d_marker" id="[1]"/>
                     <!-- 角度反転して部屋から出る -->
-
+                     <SetDestination name="target_1.1" value="[(6.5,0,270)]"/>
                     <!-- GoObjFrontでid検出器を用いて在庫のaruco_id[1]前に移動 -->
 
                     <!-- 作成したArm_catchの動作を呼び出し、補充動作を実行 -->
@@ -35,7 +45,6 @@
 
                     <!-- Arm_catchで掴んだobjectを補充場所に配置 -->
 
-
                     <!-- 補充完了、次のSequenceへ -->
                 </Sequence>
             </FailureIsSuccess>
@@ -43,7 +52,15 @@
             <FailureIsSuccess name = "sub_2">
                 <Sequence name="sub">
                     <!-- id_markerの検出器を再配置して条件分岐の確認  -->
-                    <SetDetector name="set marker_detector 2" func_name="marker.d_marker" id="[0]"/>
+                    <SetDetector name="set marker_detector 2" func_name="marker.d_marker" id="[2]"/>
+
+                    <SetDestination name="target_2.1" value="[(6.5,-4,180)]"/>
+                    <GoToPose name="target_2.1"/>
+                    <Sleep name="sleep1" time="[3]"/>
+                    <Watch name="watch_marker"/>
+                    <GetObjFront name="goto_marker"/>
+                    <SetDestination name="target_3" value="[(5.5,-5,180)]"/>
+                    <GoToPose name="target_3"/>
                 </Sequence>
             </FailureIsSuccess>
             
