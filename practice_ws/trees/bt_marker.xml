@@ -1,5 +1,6 @@
 <root>
     <BehaviorTree ID="bt_marker">
+    <!-- Sequenceの仕組み、Sequenceはその中のコードでex.Watchなどで検出が失敗するとFalseを返し、その時点でSequenceは終了します、このコードではFailureIsSuccessノードを用いて、各SequenceがFalseを返しても次のSequenceに進むようにしています。 -->
         <Sequence name="sequence">
             <FailureIsSuccess name = "main">
                 <Sequence name="sub_1">
@@ -10,19 +11,14 @@
                     <GoToPose name="target_1.1"/>
                     <SetDestination name="target_1.2" value="[(6.5,-1.1,180)]"/>
                     <GoToPose name="target_1.2"/>
+                    <!-- 角度を確実に変えるようにsleep-->
                     <Sleep name="sleep1" time="[3]"/>
+                    <!-- Markerを確認することで、正しい部屋か認識する -->
                     <Watch name="watch_marker"/>
                     <GetObjFront name="goto_marker"/>
-                   
+                    <!-- 部屋が確認出来たら、その部屋の前に移動 -->
                     <SetDestination name="target_3" value="[(5.5,-2.25,180)]"/>
                     <GoToPose name="target_3"/>
-                    
-                    <!-- 角度を変えたらidが検出器に映る -->
-
-                    <!-- GoObjFrontでid検出器を用いてaruco_id[1]前に移動 -->
-
-                    <!-- 少し左に移動して右に回転、その後少し前進 -->
-
                     <!-- id_markerからobjectの判定に移るので、判定したいobjectの検出器をセット -->
                     <SetDetector name="set coke_detector" func_name="my_dtcs.d_coke" id="None"/>
                     <!-- watchによるobjectの判定 -->
@@ -30,7 +26,7 @@
                     <!-- id_markerの検出器を再配置(objectから在庫のid判定へ移行)して条件分岐の確認  この時点でTrueが通ります、在庫に移動して補充しましょう-->
                     <SetDetector name="set marker_detector 1" func_name="marker.d_marker" id="[1]"/>
                     <!-- 角度反転して部屋から出る -->
-                     <SetDestination name="target_1.1" value="[(6.5,0,270)]"/>
+                    <SetDestination name="target_1.1" value="[(6.5,0,270)]"/>
                     <!-- GoObjFrontでid検出器を用いて在庫のaruco_id[1]前に移動 -->
 
                     <!-- 作成したArm_catchの動作を呼び出し、補充動作を実行 -->
