@@ -1,0 +1,58 @@
+<root>
+    <BehaviorTree ID="bt_marker">
+        <Sequence name="sequence">
+            <FailureIsSuccess name = "main">
+                <Sequence name="sub_1">
+                    <!-- id_markerの検出器を配置  -->
+                    <SetDetector name="set marker_detector" func_name="marker.d_marker" id="[1]"/>
+                    <!-- nav_pointの設定である程度aruco_id[1]が映る場所に調整 -->
+
+                    <!-- 角度を変えたらidが検出器に映る -->
+
+                    <!-- GoObjFrontでid検出器を用いてaruco_id[1]前に移動 -->
+
+                    <!-- 少し左に移動して右に回転、その後少し前進 -->
+
+                    <!-- id_markerからobjectの判定に移るので、判定したいobjectの検出器をセット -->
+
+                    <!-- watchによるobjectの判定 -->
+                    <JudgeWatch name="watch_marker judgewatch"/> 
+                    <!-- id_markerの検出器を再配置(objectから在庫のid判定へ移行)して条件分岐の確認  この時点でTrueが通ります、在庫に移動して補充しましょう-->
+                    <SetDetector name="set marker_detector 1" func_name="marker.d_marker" id="[0]"/>
+                    <!-- 角度反転して部屋から出る -->
+
+                    <!-- GoObjFrontでid検出器を用いて在庫のaruco_id[1]前に移動 -->
+
+                    <!-- 作成したArm_catchの動作を呼び出し、補充動作を実行 -->
+
+                    <!-- nav_pointの設定である程度aruco_id[1]が映る場所に調整 -->
+
+                    <!-- 角度を変えたらidが検出器に映る -->
+
+                    <!-- GoObjFrontでid検出器を用いてaruco_id[1]前に移動 -->
+
+                    <!-- 少し左に移動して右に回転、その後少し前進 -->
+
+                    <!-- Arm_catchで掴んだobjectを補充場所に配置 -->
+
+
+                    <!-- 補充完了、次のSequenceへ -->
+                </Sequence>
+            </FailureIsSuccess>
+
+            <FailureIsSuccess name = "sub_2">
+                <Sequence name="sub">
+                    <!-- id_markerの検出器を再配置して条件分岐の確認  -->
+                    <SetDetector name="set marker_detector 2" func_name="marker.d_marker" id="[0]"/>
+                </Sequence>
+            </FailureIsSuccess>
+            
+            <FailureIsSuccess name = "sub_3">
+                <Sequence name="sub_3">
+                    <!-- id_markerの検出器を再配置して条件分岐の確認  -->
+                    <SetDetector name="set marker_detector 3" func_name="marker.d_marker" id="[0]"/>
+                </Sequence>
+            </FailureIsSuccess>
+        </Sequence>
+    </BehaviorTree>
+</root>

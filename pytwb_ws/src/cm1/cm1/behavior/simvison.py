@@ -26,6 +26,8 @@ class Viewer(py_trees.behaviour.Behaviour):
             i_num = -1
         run_actor_async('find_coke', self.actor_callback, num_thresh, i_num)
 
+
+
     def update(self):
         if self.mode == 'one_shot':
             return py_trees.common.Status.SUCCESS
@@ -83,6 +85,7 @@ class ResPoint:
         self.y = point_bag.y
         self.distance = point_bag.last_point.distance
 
+
 @behavior
 class Watch(py_trees.behaviour.Behaviour):
     desc = 'watch target repeatedly to get reliable location data'
@@ -136,3 +139,41 @@ class GetObjFront(py_trees.behaviour.Behaviour):
             return py_trees.common.Status.SUCCESS
         else:
             return py_trees.common.Status.FAILURE
+
+@behavior
+class JudgeWatch(py_trees.behaviour.Behaviour):
+    desc = 'watch target repeatedly to get reliable location data'
+
+    def __init__(self, name, node, debug=False):
+        super(JudgeWatch, self).__init__(name)
+        self.bb = py_trees.blackboard.Blackboard()
+        self.debug = debug
+        self.candidate = None
+
+    def initialise(self):
+        self.running = True
+        run_actor_async('get_found', self.actor_callback, 10, 3)
+        self.logger.info("watching target")
+
+    def update(self):
+        if self.candidate:
+            self.bb.set('found_point', self.candidate)
+            return py_trees.common.Status.FAILURE
+        if self.running:
+            return py_trees.common.Status.RUNNING
+        else:
+            return py_trees.common.Status.SUCCESS
+
+    def actor_callback(self, point_bag):
+        self.candidate = point_bag
+        self.running = False
+    
+    def terminate(self, new_status):
+        if self.candidate:
+            self.bb.set('target_pose', [self.candidate.x, self.candidate.y, 1.57])
+            self.logger.info(f"Concluded x:{self.candidate.x}, y:{self.candidate.y}")
+        else:
+            self.logger.info(f"Terminated {new_status}")
+
+            #pyteesのtreeを作りたい>gptに聞く
+            #Retryのサクセスオンワン
