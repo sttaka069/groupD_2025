@@ -104,18 +104,35 @@ def d_circle(img):
 
 def d_bottle(img):
     # 画像の読み込み
-    draw_img = img.copy() # 元データを書き換えないようにコピーを作成
-    # HSVに変換（色指定はRGBよりHSVの方が扱いやすい）
+    draw_img = img.copy()
+    # HSVに変換
     hsv_img = cv2.cvtColor(draw_img, cv2.COLOR_BGR2HSV)
 
-    # BGR空間での抽出範囲
-    ## プラコップ
-    lower = np.array([170, 0, 20]) # 色相, 彩度, 明度 の下限
-    upper = np.array([180, 0, 200]) # 色相, 彩度, 明度 の上限
+    lower = np.array([0, 0, 0])       
+    upper = np.array([180, 60, 130])  
 
-    # 指定範囲に入る画素を抽出（白が該当部分）
+    # 指定範囲に入る画素を抽出
     mask = inRangeWrap(hsv_img, lower, upper)
     
+    # ノイズ処理（モルフォロジー変換）
+    # コップの穴を埋めつつ、細かいのを消す
+    kernel = np.ones((2, 2), np.uint8)
+    mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel)
+    mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)
+
+    # 画面内で一番大きい「灰色の塊」だけをコップとみなす処理
+    contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    
+    if len(contours) > 0:
+        # 面積が一番大きい輪郭を見つける
+        max_cnt = max(contours, key=cv2.contourArea)
+        # 新しいマスクを作り、最大輪郭だけを白く塗る
+        mask_final = np.zeros_like(mask)
+        cv2.drawContours(mask_final, [max_cnt], -1, 255, -1)
+        mask = mask_final
+    else:
+        return None
+
     try:
         x, y, s = calc_centroid(mask)
         print(f"{s=}")

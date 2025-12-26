@@ -28,7 +28,7 @@
                     <!-- 角度反転して部屋から出る -->
                     <SetDestination name="target_1.1" value="[(6.5,0,270)]"/>
                     <!-- GoObjFrontでid検出器を用いて在庫のaruco_id[1]前に移動 -->
-
+                    
                     <!-- 作成したArm_catchの動作を呼び出し、補充動作を実行 -->
                     <BehaviorTree ID="pick_up">
                     <!-- nav_pointの設定である程度aruco_id[1]が映る場所に調整 -->

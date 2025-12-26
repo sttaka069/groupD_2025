@@ -12,7 +12,7 @@ def inRangeWrap(hsv, lower, upper):
         return cv2.bitwise_or(cv2.inRange(hsv, lower1, upper1),cv2.inRange(hsv, lower2, upper2))
 
 # 画像読み込み
-img = cv2.imread("ash_cup7.png")
+img = cv2.imread("ash_cup10.png")
 if img is None: exit()
 draw_img = img.copy()
 hsv_img = cv2.cvtColor(draw_img, cv2.COLOR_BGR2HSV)
