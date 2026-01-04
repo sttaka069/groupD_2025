@@ -1,5 +1,5 @@
 <root>
-    <BehaviorTree ID="pick_coke">
+    <BehaviorTree ID="pick_cup">
     <Sequence name="cup">
         <SetDetector name="set cup_detector" func_name="my_dtcs.d_bottle" id="None"/>
         <Watch name="watch_coke"/>
