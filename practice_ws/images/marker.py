@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-coding: utf-8
+# coding: utf-8
 from cv2 import aruco, imread, imwrite
 import numpy as np
 
-引数nのIDのマーカーを作成する
+# 引数nのIDのマーカーを作成する
 def make_marker(n):
     # Size and offset value
     size = 150
@@ -20,15 +20,15 @@ def make_marker(n):
 
     # overlap image
     img[y_offset:y_offset + ar_img.shape[0], x_offset:x_offset + ar_img.shape[1]] = ar_img
-    imwrite(f"/root/practicews/images/marker{n}.png", img)
+    imwrite(f"/root/practice_ws/images/marker_{n}.png", img)
 
 def d_marker(img, n: int):
     dictionary = aruco.getPredefinedDictionary(aruco.DICT_6X6_250)
-    parameters = aruco.DetectorParameterscreate()
+    parameters = aruco.DetectorParameters_create()
 
     # detect and draw marker's information
-    corners, ids,  = aruco.detectMarkers(img, dictionary, parameters=parameters)
-
+    corners, ids, _ = aruco.detectMarkers(img, dictionary, parameters=parameters)
+    
     if n in np.ravel(ids) :
         index = np.where(ids == n)[0][0] #num_id が格納されているindexを抽出
         cornerUL = corners[index][0][0]
