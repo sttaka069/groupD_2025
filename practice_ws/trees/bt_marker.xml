@@ -1,6 +1,6 @@
 <root>
     <BehaviorTree ID="bt_marker">
-    <!-- Sequenceの仕組み、Sequenceはその中のコードでex.Watchなどで検出が失敗するとFalseを返し、その時点でSequenceは終了します、このコードではFailureIsSuccessノードを用いて、各SequenceがFalseを返しても次のSequenceに進むようにしています。 -->
+        <!-- Sequenceの仕組み、Sequenceはその中のコードでex.Watchなどで検出が失敗するとFalseを返し、その時点でSequenceは終了します、このコードではFailureIsSuccessノードを用いて、各SequenceがFalseを返しても次のSequenceに進むようにしています。 -->
         <Sequence name="sequence">
             <FailureIsSuccess name = "main">
                 <Sequence name="sub_1">
@@ -16,7 +16,7 @@
                     <!-- Markerを確認することで、正しい部屋か認識する -->
                     <Watch name="watch_marker"/>
                     <GetObjFront name="goto_marker"/>
-                    <!-- 部屋が確認出来たら、その部屋の前に移動 -->
+                    <!-- 部屋が確認出来たら、その部屋の前に移動 -->                   
                     <SetDestination name="target_3" value="[(5.5,-2.25,180)]"/>
                     <GoToPose name="target_3"/>
                     <!-- id_markerからobjectの判定に移るので、判定したいobjectの検出器をセット -->
@@ -27,17 +27,38 @@
                     <SetDetector name="set marker_detector 1" func_name="marker.d_marker" id="[1]"/>
                     <!-- 角度反転して部屋から出る -->
                     <SetDestination name="target_1.1" value="[(6.5,0,270)]"/>
+                    <GoToPose name="go_to_back"/>
                     <!-- GoObjFrontでid検出器を用いて在庫のaruco_id[1]前に移動 -->
+                    <SetDestination name="go_to_warehouse" value="[(0.49,0,90)]"/>
+                    <GoToPose name="go_to_warehouse"/>
 
-                    <!-- 作成したArm_catchの動作を呼び出し、補充動作を実行 -->
-                    <BehaviorTree ID="pick_up">
-                    <!-- nav_pointの設定である程度aruco_id[1]が映る場所に調整 -->
+                    <SetDetector name="set_stock_detector" func_name="marker.d_marker" id="[1]"/>
+        
+                    <Watch name="watch_stock"/>
+
+                    <GetObjFront name="goto_stock_front"/>
                     
+                    <!-- 作成したArm_catchの動作を呼び出し、補充動作を実行 -->
+                
+                    <!-- nav_pointの設定である程度aruco_id[1]が映る場所に調整 -->
+                    <SetDetector name="set_shelf_return" func_name="marker.d_marker" id="[1]"/>
+
+                    <SetDestination name="return_to_shelf" value="[(6.5,-1.1,180)]"/>
+
+                    <GoToPose name="return_to_shelf"/>
+
                     <!-- 角度を変えたらidが検出器に映る -->
+                    <Sleep name="wait_stabilize" time="[3]"/>
+
+                    <Watch name="watch_shelf_again"/>
 
                     <!-- GoObjFrontでid検出器を用いてaruco_id[1]前に移動 -->
+                    <GetObjFront name="goto_shelf_front_again"/>
 
                     <!-- 少し左に移動して右に回転、その後少し前進 -->
+                    <SetDestination name="adjust_pose_for_put" value="[(4.6,-2.3,180)]"/>
+
+                    <GoToPose name="adjust_pose_for_put"/>
 
                     <!-- Arm_catchで掴んだobjectを補充場所に配置 -->
 
@@ -50,20 +71,56 @@
                     <!-- id_markerの検出器を再配置して条件分岐の確認  -->
                     <SetDetector name="set marker_detector 2" func_name="marker.d_marker" id="[2]"/>
 
-                    <SetDestination name="target_2.1" value="[(6.5,-4,180)]"/>
+                    <SetDestination name="target_2.1" value="[(6.5,-3.8,180)]"/>
                     <GoToPose name="target_2.1"/>
                     <Sleep name="sleep1" time="[3]"/>
                     <Watch name="watch_marker"/>
                     <GetObjFront name="goto_marker"/>
                     <SetDestination name="target_3" value="[(5.5,-5,180)]"/>
                     <GoToPose name="target_3"/>
+                    <SetDetector name="set ball_detector 1" func_name="my_dtcs.orange_ball" id="None"/>
+                    <JudgeWatch name="watch_marker judgewatch"/>
+                    <SetDetector name="set marker_detector 2" func_name="marker.d_marker" id="[2]"/>
+                    <SetDestination name="target_3.1" value="[(6.5,-5,270)]"/>
+                    <GoToPose name="go_to_back"/>
+                    <SetDestination name="go_to_warehouse" value="[(2.6,0,90)]"/>
+                    <GoToPose name="go_to_warehouse"/>
+                    <SetDetector name="set_stock_detector" func_name="marker.d_marker" id="[2]"/>
+                    <Watch name="watch_stock"/>
+                    <GetObjFront name="goto_stock_front"/>
+                    <!-- 作成したArm_catchの動作を呼び出し、補充動作を実行 -->
+                    <SetDetector name="set_shelf_return" func_name="marker.d_marker" id="[2]"/>
+                    <SetDestination name="return_to_shelf" value="[(6.5,-4,180)]"/>
+                    <GoToPose name="return_to_shelf"/>
+                    <!-- <Sleep name="wait_stabilize" time="[3]"/>
+                    <Watch name="watch_shelf_again"/> -->
+                    <GetObjFront name="goto_shelf_front_again"/>
+                    <SetDestination name="adjust_pose_for_put" value="[(5,-5,180)]"/>
+                    <GoToPose name="adjust_pose_for_put"/>
+                    <!-- Arm_catchで掴んだobjectを補充場所に配置 -->
                 </Sequence>
             </FailureIsSuccess>
             
             <FailureIsSuccess name = "sub_3">
                 <Sequence name="sub_3">
                     <!-- id_markerの検出器を再配置して条件分岐の確認  -->
-                    <SetDetector name="set marker_detector 3" func_name="marker.d_marker" id="[0]"/>
+                    <SetDetector name="set marker_detector 3" func_name="marker.d_marker" id="[3]"/>
+
+                    <SetDestination name="target_3.1" value="[(6.5,-6.6,180)]"/>
+                    <GoToPose name="target_3.1"/>
+                    <Sleep name="sleep1" time="[3]"/>
+                    <Watch name="watch_marker"/>
+                    <GetObjFront name="goto_marker"/>
+                    <SetDestination name="target_3" value="[(5.5,-7.9,180)]"/>
+                    <GoToPose name="target_3"/>
+                    <JudgeWatch name="watch_cup judgewatch"/>
+                </Sequence>
+            </FailureIsSuccess>
+
+            <FailureIsSuccess name = "sub_4">
+                <Sequence name="sub_4">
+                    <SetDestination name="return_origin" value="[(0, 0, 0)]"/>
+                    <GoToPose name="return_origin"/>
                 </Sequence>
             </FailureIsSuccess>
         </Sequence>

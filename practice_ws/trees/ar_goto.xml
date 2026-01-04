@@ -1,0 +1,13 @@
+<root>
+    <BehaviorTree ID="d_marker">
+        <Sequence name="main">
+            <SetDetector name="set_marker" func_name="marker.d_marker" id="[1]"/>
+            
+            <Watch name="find_marker"/>
+            
+            <GetObjFront name="calc_front_pos"/>
+            
+            <GoToPose name="move_to_marker"/>
+        </Sequence>
+    </BehaviorTree>
+</root>
