@@ -24,13 +24,13 @@ def calc_centroid(mask):
         # 重心座標を計算SS
         cx = int(M["m10"] / M["m00"])
         cy = int(M["m01"] / M["m00"])
-        s = np.count_nonzero(mask)/(mask.shape[0]*mask.shape[1])
+        s = np.count_nonzero(mask)/(mask.shape[0]*mask.shape[1]) #画像に占めるマスクの割合
         return cx, cy, s
     else:
         return None   
 ##　↑↑↑↑↑↑↑inRangeWrap, calc_centroidは変更しないでください↑↑↑↑↑↑↑
 
-def d_ball(img):
+def orange_ball(img):
     # 画像の読み込み
     draw_img = img.copy() # 元データを書き換えないようにコピーを作成
     # HSVに変換（色指定はRGBよりHSVの方が扱いやすい）
@@ -38,8 +38,8 @@ def d_ball(img):
 
     # BGR空間での抽出範囲
     ## ボール
-    lower = np.array([0, 220, 170]) # 色相, 彩度, 明度 の下限
-    upper = np.array([10, 240, 255]) # 色相, 彩度, 明度 の上限
+    lower = np.array([7, 50, 50]) # 色相, 彩度, 明度 下限
+    upper = np.array([10, 255, 255]) # 色相, 彩度, 明度 上限
 
     # 指定範囲に入る画素を抽出（白が該当部分）
     mask = inRangeWrap(hsv_img, lower, upper)
@@ -59,8 +59,8 @@ def d_coke(img):
 
     # BGR空間での抽出範囲
     ## コーラ缶
-    lower = np.array([170, 230, 0]) # 色相, 彩度, 明度 の下限
-    upper = np.array([180, 250, 255]) # 色相, 彩度, 明度 の上限
+    lower = np.array([100, 50, 50]) # 色相, 彩度, 明度 下限
+    upper = np.array([0, 255, 255]) # 色相, 彩度, 明度 上限
 
     # 指定範囲に入る画素を抽出（白が該当部分）
     mask = inRangeWrap(hsv_img, lower, upper)
@@ -102,3 +102,23 @@ def d_circle(img):
     else:
         return None
 
+def d_bottle(img):
+    # 画像の読み込み
+    draw_img = img.copy() # 元データを書き換えないようにコピーを作成
+    # HSVに変換（色指定はRGBよりHSVの方が扱いやすい）
+    hsv_img = cv2.cvtColor(draw_img, cv2.COLOR_BGR2HSV)
+
+    # BGR空間での抽出範囲
+    ## プラコップ
+    lower = np.array([170, 0, 20]) # 色相, 彩度, 明度 の下限
+    upper = np.array([180, 0, 200]) # 色相, 彩度, 明度 の上限
+
+    # 指定範囲に入る画素を抽出（白が該当部分）
+    mask = inRangeWrap(hsv_img, lower, upper)
+    
+    try:
+        x, y, s = calc_centroid(mask)
+        print(f"{s=}")
+        return x, y
+    except TypeError:
+        return None
