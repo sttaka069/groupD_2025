@@ -39,7 +39,21 @@
                     <GetObjFront name="goto_stock_front"/>
                     
                     <!-- 作成したArm_catchの動作を呼び出し、補充動作を実行 -->
-                    <Subtree ID="pick_ball" name="pick_ball_action"/>
+
+                    <SetDetector name="set coke_detector" func_name="my_dtcs.d_coke" id="None"/>
+                    <Watch name="watch_coke"/>
+                    <GetObjFront name="get_coke_front"/>
+                    <GoToPose name="move_to_place_loc"/>
+                    <ReachObj name="reach_coke" />
+                    <Pick name="pick"/>
+                    <ObjectLocation name="object_location"/>
+                    <Shift name="shift" target="[0.175]"/>
+                    <Sleep name="sleep" time="[3]"/>
+                    <Fit2 name="fit2" distance="[0.175]"/>
+                    <Close name="close"/>
+                    <ArmHome name="home"/>
+
+                    <!-- ここまで -->
                     <!-- nav_pointの設定である程度aruco_id[1]が映る場所に調整 -->
                     <SetDetector name="set_shelf_return" func_name="marker.d_marker" id="[1]"/>
 
@@ -90,7 +104,21 @@
                     <Watch name="watch_stock"/>
                     <GetObjFront name="goto_stock_front"/>
                     <!-- 作成したArm_catchの動作を呼び出し、補充動作を実行 -->
-                    <Subtree ID="pick_ball" name="pick_ball_action"/>
+
+                    <SetDetector name="set ball_detector" func_name="my_dtcs.orange_ball" id="None"/>
+                    <Watch name="watch_ball"/>
+                    <GetObjFront name="get_ball_front"/>
+                    <GoToPose name="move_to_place_loc"/>
+                    <ReachObj name="reach_ball" />
+                    <Pick name="pick"/>
+                    <ObjectLocation name="object_location"/>
+                    <Shift name="shift" target="[0.175]"/>
+                    <Sleep name="sleep" time="[3]"/>
+                    <Fit2 name="fit2" distance="[0.175]"/>
+                    <Close name="close"/>
+                    <ArmHome name="home"/>
+
+                    <!-- ここまで -->
                     <SetDetector name="set_shelf_return" func_name="marker.d_marker" id="[2]"/>
                     <SetDestination name="return_to_shelf" value="[(6.5,-4,180)]"/>
                     <GoToPose name="return_to_shelf"/>
@@ -100,6 +128,7 @@
                     <SetDestination name="adjust_pose_for_put" value="[(5,-5,180)]"/>
                     <GoToPose name="adjust_pose_for_put"/>
                     <!-- Arm_catchで掴んだobjectを補充場所に配置 -->
+                    <Place name="place_ball"/>
                 </Sequence>
             </FailureIsSuccess>
             

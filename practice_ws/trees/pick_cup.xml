@@ -2,10 +2,10 @@
     <BehaviorTree ID="pick_cup">
     <Sequence name="cup">
         <SetDetector name="set cup_detector" func_name="my_dtcs.d_bottle" id="None"/>
-        <Watch name="watch_coke"/>
-        <GetObjFront name="get_coke_front"/>
+        <Watch name="watch_cup"/>
+        <GetObjFront name="get_cup_front"/>
         <GoToPose name="move_to_place_loc"/>
-        <ReachObj name="reach_coke" />
+        <ReachObj name="reach_cup" />
         <Pick name="pick"/>
         <ObjectLocation name="object_location"/>
         <Shift name="shift" target="[0.175]"/>
