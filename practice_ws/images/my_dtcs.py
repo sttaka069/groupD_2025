@@ -108,34 +108,43 @@ def d_bottle(img):
     # HSVに変換
     hsv_img = cv2.cvtColor(draw_img, cv2.COLOR_BGR2HSV)
 
-    lower = np.array([0, 0, 0])       
-    upper = np.array([180, 60, 130])  
+    # 色の閾値設定
+    lower_target = np.array([0, 0, 0])
+    upper_target = np.array([180, 30, 100]) 
 
-    # 指定範囲に入る画素を抽出
-    mask = inRangeWrap(hsv_img, lower, upper)
+    # 指定範囲に入る画素を抽出（inRangeWrapを使用）
+    mask = inRangeWrap(hsv_img, lower_target, upper_target)
     
     # ノイズ処理（モルフォロジー変換）
-    # コップの穴を埋めつつ、細かいのを消す
-    kernel = np.ones((2, 2), np.uint8)
+    kernel = np.ones((9, 9), np.uint8)
     mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel)
     mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)
 
-    # 画面内で一番大きい「灰色の塊」だけをコップとみなす処理
+    # 画面内で一番大きい塊だけを抽出する処理
     contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    clean_mask = np.zeros_like(mask)
     
     if len(contours) > 0:
         # 面積が一番大きい輪郭を見つける
         max_cnt = max(contours, key=cv2.contourArea)
-        # 新しいマスクを作り、最大輪郭だけを白く塗る
-        mask_final = np.zeros_like(mask)
-        cv2.drawContours(mask_final, [max_cnt], -1, 255, -1)
-        mask = mask_final
+
+        # 【修正】変数名を max_cnt に統一し、一定以上の大きさ（面積500以上）なら採用
+        if cv2.contourArea(max_cnt) > 500: 
+            cv2.drawContours(clean_mask, [max_cnt], -1, 255, thickness=cv2.FILLED)
+        else:
+            # 大きな塊がない場合はNoneを返す
+            return None
     else:
         return None
 
     try:
-        x, y, s = calc_centroid(mask)
-        print(f"{s=}")
-        return x, y
+        # ノイズ除去後の clean_mask を使って座標を計算する
+        result = calc_centroid(clean_mask)
+        if result is not None:
+            x, y, s = result
+            print(f"{s=}")
+            return x, y
+        else:
+            return None
     except TypeError:
         return None
