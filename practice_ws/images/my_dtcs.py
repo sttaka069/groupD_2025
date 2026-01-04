@@ -38,8 +38,8 @@ def orange_ball(img):
 
     # BGR空間での抽出範囲
     ## ボール
-    lower = np.array([7, 50, 50]) # 色相, 彩度, 明度 下限
-    upper = np.array([10, 255, 255]) # 色相, 彩度, 明度 上限
+    lower = np.array([15, 100, 100]) # 色相, 彩度, 明度 下限
+    upper = np.array([20, 255, 255]) # 色相, 彩度, 明度 上限
 
     # 指定範囲に入る画素を抽出（白が該当部分）
     mask = inRangeWrap(hsv_img, lower, upper)
