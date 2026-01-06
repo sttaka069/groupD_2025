@@ -31,19 +31,20 @@ def calc_centroid(mask):
 ##　↑↑↑↑↑↑↑inRangeWrap, calc_centroidは変更しないでください↑↑↑↑↑↑↑
 
 def orange_ball(img):
-    # 画像の読み込み
     draw_img = img.copy() # 元データを書き換えないようにコピーを作成
-    # HSVに変換（色指定はRGBよりHSVの方が扱いやすい）
+    # HSVに変換
     hsv_img = cv2.cvtColor(draw_img, cv2.COLOR_BGR2HSV)
 
-    # BGR空間での抽出範囲
-    ## ボール
-    lower = np.array([15, 100, 100]) # 色相, 彩度, 明度 下限
-    upper = np.array([20, 255, 255]) # 色相, 彩度, 明度 上限
+    lower = np.array([0, 202, 70]) 
+    upper = np.array([10, 253, 255])
 
-    # 指定範囲に入る画素を抽出（白が該当部分）
-    mask = inRangeWrap(hsv_img, lower, upper)
+    mask = cv2.inRange(hsv_img, lower, upper)
     
+    # ノイズ除去（重要）
+    kernel = np.ones((5, 5), np.uint8)
+    mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel)  # 小さな点を消す
+    mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel) # ボールの中の穴を埋める
+
     try:
         x, y, s = calc_centroid(mask)
         print(f"{s=}")

@@ -73,7 +73,18 @@ class ApproachAction(SubNet):
 
         while True:
             log = {}
-            _,_,target_angle,distance = self.run_actor('measure_center', target='base_link', assumed=assumed,log=log)
+            # ▼修正：まず結果を変数で受け取る
+            result = self.run_actor('measure_center', target='base_link', assumed=assumed,log=log)
+            
+            # ▼追加：もし見つからなかったら（Noneなら）、安全に停止してループを抜ける
+            if result is None:
+                print("Target lost! Stopping.")
+                self.move(0)
+                f.close()
+                return None # または break
+
+            # ▼修正：中身があることを確認してから取り出す
+            _,_,target_angle,distance = result
             if distance < 0:
                 print('could not get distance value. give up')
                 return
@@ -171,6 +182,9 @@ class ApproachAction(SubNet):
         start = PointEx(0.0, 0.0)
         start.setTransform(trans.transform)
         target_angle = self.run_actor('targetted_walk', target, "pick_control.csv")
+        if target_angle is None:
+            print("Approach failed: Target lost.")
+            return False
         print(f'target_angle:{degrees(target_angle)}')
         self.run_actor('sleep', 3)
         trans = self.run_actor('map_trans')
