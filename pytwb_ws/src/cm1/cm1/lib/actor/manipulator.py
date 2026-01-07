@@ -202,7 +202,20 @@ class ManipulatorNetwork(SubNet):
         cur = []
         for k in ('joint1', 'joint2','joint3','joint4','joint5','joint6'):
             cur.append(jstat[k])
-        _,_,target_angle,_ = self.run_actor('measure_center2', assumed=distance)
+        # ▼【修正】結果を一度変数で受け取る
+        result = self.run_actor('measure_center2', assumed=distance)
+        
+        # ▼【追加】もし失敗(None)したり、変な値が返ってきたら、調整せずに終了する
+        if result is None:
+            print("Fit2: Target lost or occluded. Skipping adjustment.")
+            return True # 成功したことにして次（Close）へ進む
+            
+        _,_,target_angle,_ = result
+        
+        # 安全策：もし角度が0（検出失敗のデフォルト値）なら動かない
+        if target_angle == 0:
+             print("Fit2: Angle is 0 (likely detection fail). Skipping.")
+             return True
         cur[0] = target_angle
         self.run_actor('move_joint', *cur)
         self.run_actor('sleep', 3)
