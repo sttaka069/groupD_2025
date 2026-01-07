@@ -60,8 +60,8 @@ def d_coke(img):
 
     # BGR空間での抽出範囲
     ## コーラ缶
-    lower_target = np.array([170, 189, 62])
-    upper_target = np.array([179, 255, 220])
+    lower_target = np.array([172, 23, 0])
+    upper_target = np.array([177, 255, 255])
 
     # 指定範囲に入る画素を抽出（白が該当部分）
     mask = inRangeWrap(hsv_img, lower, upper)
