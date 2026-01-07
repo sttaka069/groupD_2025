@@ -3424,5 +3424,7 @@
         <pose>0 0 10 0 -0 0</pose>
       </light>
     </state>
+    <plugin name="gazebo_link_attacher" filename="libgazebo_link_attacher.so"/>
+    <plugin name="gazebo_ros_state" filename="libgazebo_ros_state.so"/>
   </world>
 </sdf>
