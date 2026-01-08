@@ -106,6 +106,9 @@
                     <Watch name="watch_stock"/>
                     <GetObjFront name="goto_stock_front"/>
                     <!-- 作成したArm_catchの動作を呼び出し、補充動作を実行 -->
+                    
+
+                    <!-- ボール前に移動 -->
 
                     <SetDetector name="set ball_detector" func_name="my_dtcs.orange_ball" id="None"/>
                     <Watch name="watch_ball"/>
