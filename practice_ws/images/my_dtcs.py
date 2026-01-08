@@ -51,6 +51,50 @@ def orange_ball(img):
         return x, y
     except TypeError:
         return None
+def d_coke2(img):
+    # 画像の読み込み
+    draw_img = img.copy() # 元データを書き換えないようにコピーを作成
+    # HSVに変換（色指定はRGBよりHSVの方が扱いやすい）
+    hsv_img = cv2.cvtColor(draw_img, cv2.COLOR_BGR2HSV)
+
+    # BGR空間での抽出範囲
+    ## コーラ缶
+    lower_target = np.array([172, 23, 0])
+    upper_target = np.array([177, 255, 255])
+
+    # 指定範囲に入る画素を抽出（白が該当部分）
+    mask = inRangeWrap(hsv_img, lower_target, upper_target)
+    
+    # ノイズ除去（重要）
+    kernel = np.ones((5, 5), np.uint8)
+    mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel)  # 小さな点を消す
+    mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel) # ボールの中の穴を埋める
+    
+    # 輪郭抽出
+    contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    clean_mask = np.zeros_like(mask) # 計算用のきれいなマスクを作成
+
+    # 有効な物体が見つかったかどうかのフラグ
+    found_valid_obj = False
+
+    if len(contours) > 0:
+        # 一番大きい輪郭を見つける
+        c = max(contours, key=cv2.contourArea)
+        area = cv2.contourArea(c)
+        print(f"DEBUG: Detected area = {area}")
+        # ログのゴミ(s=0.001)は約300~400画素なので、1000画素以下は無視
+        # ログの壁(s=0.16)は約50000画素なので、30000画素以上は無視
+        if area > 500 and area < 100000:
+            # 条件に合うものだけを clean_mask に描画
+            cv2.drawContours(clean_mask, [c], -1, 255, thickness=cv2.FILLED)
+            found_valid_obj = True
+
+    try:
+        x, y, s = calc_centroid(clean_mask)
+        print(f"{s=}")
+        return x, y
+    except TypeError:
+        return None
 
 def d_coke(img):
     # 画像の読み込み
@@ -64,15 +108,34 @@ def d_coke(img):
     upper_target = np.array([177, 255, 255])
 
     # 指定範囲に入る画素を抽出（白が該当部分）
-    mask = inRangeWrap(hsv_img, lower, upper)
+    mask = inRangeWrap(hsv_img, lower_target, upper_target)
     
     # ノイズ除去（重要）
     kernel = np.ones((5, 5), np.uint8)
     mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel)  # 小さな点を消す
     mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel) # ボールの中の穴を埋める
     
+    # 輪郭抽出
+    contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    clean_mask = np.zeros_like(mask) # 計算用のきれいなマスクを作成
+
+    # 有効な物体が見つかったかどうかのフラグ
+    found_valid_obj = False
+
+    if len(contours) > 0:
+        # 一番大きい輪郭を見つける
+        c = max(contours, key=cv2.contourArea)
+        area = cv2.contourArea(c)
+        print(f"DEBUG: Detected area = {area}")
+        # ログのゴミ(s=0.001)は約300~400画素なので、1000画素以下は無視
+        # ログの壁(s=0.16)は約50000画素なので、30000画素以上は無視
+        if area > 10000 and area < 100000:
+            # 条件に合うものだけを clean_mask に描画
+            cv2.drawContours(clean_mask, [c], -1, 255, thickness=cv2.FILLED)
+            found_valid_obj = True
+
     try:
-        x, y, s = calc_centroid(mask)
+        x, y, s = calc_centroid(clean_mask)
         print(f"{s=}")
         return x, y
     except TypeError:

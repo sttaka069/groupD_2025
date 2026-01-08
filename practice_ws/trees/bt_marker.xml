@@ -38,9 +38,11 @@
 
                     <GetObjFront name="goto_stock_front"/>
                     
+                    <!-- 見える位置二移動 -->
+                    <SetDestination name="go_to_coke_view" value="[(1.033, 0.304, 79.4)]"/>
+                    <GoToPose name="go_to_coke_view"/>
                     <!-- 作成したArm_catchの動作を呼び出し、補充動作を実行 -->
-
-                    <SetDetector name="set coke_detector" func_name="my_dtcs.d_coke" id="None"/>
+                    <SetDetector name="set coke_detector" func_name="my_dtcs.d_coke2" id="None"/>
                     <Watch name="watch_coke"/>
                     <GetObjFront name="get_coke_front"/>
                     <GoToPose name="move_to_place_loc"/>
