@@ -109,6 +109,8 @@
                     
 
                     <!-- ボール前に移動 -->
+                    <SetDestination name="go_to_ball_view" value="[(2.971, 0.099, 95.5)]"/>
+                    <GoToPose name="go_to_ball_view"/>
 
                     <SetDetector name="set ball_detector" func_name="my_dtcs.orange_ball" id="None"/>
                     <Watch name="watch_ball"/>
@@ -134,6 +136,7 @@
                     <GoToPose name="adjust_pose_for_put"/>
                     <!-- Arm_catchで掴んだobjectを補充場所に配置 -->
                     <Place name="place_ball"/>
+                    <ArmHome name="back_home"/>
                 </Sequence>
             </FailureIsSuccess>
             
