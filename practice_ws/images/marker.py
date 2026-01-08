@@ -23,19 +23,30 @@ def make_marker(n):
     imwrite(f"/root/practice_ws/images/marker_{n}.png", img)
 
 def d_marker(img, n: int):
+    # 【追加機能】探しているIDを表示
+    print(f"--- [Debug] 探しているマーカーID: {n} ---")
+
     dictionary = aruco.getPredefinedDictionary(aruco.DICT_6X6_250)
     parameters = aruco.DetectorParameters_create()
 
-    # detect and draw marker's information
     corners, ids, _ = aruco.detectMarkers(img, dictionary, parameters=parameters)
     
-    if n in np.ravel(ids) :
-        index = np.where(ids == n)[0][0] #num_id が格納されているindexを抽出
-        cornerUL = corners[index][0][0]
-        cornerUR = corners[index][0][1]
-        cornerBR = corners[index][0][2]
-        cornerBL = corners[index][0][3]
-        center = [ (cornerUL[0]+cornerBR[0])/2 , (cornerUL[1]+cornerBR[1])/2 ]
-        return tuple(center)
+    # 【追加機能】見つかったID一覧を表示
+    if ids is not None:
+        detected_ids = np.ravel(ids)
+        print(f"--- [Debug] カメラに映っているID: {detected_ids} ---")
     else:
-        return None
+        print("--- [Debug] マーカーは何も映っていません ---")
+
+    # 判定処理
+    if ids is not None and n in np.ravel(ids):
+        index = np.where(ids == n)[0][0]
+        cornerUL = corners[index][0][0]
+        cornerBR = corners[index][0][2]
+        
+        center = [ (cornerUL[0]+cornerBR[0])/2 , (cornerUL[1]+cornerBR[1])/2 ]
+        print(f"--- [Debug] ID:{n} を発見！座標を返します ---")
+        return tuple(center)
+
+    print(f"--- [Debug] ID:{n} は見つかりませんでした... ---")
+    return None

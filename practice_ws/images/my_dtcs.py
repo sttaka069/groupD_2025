@@ -31,21 +31,66 @@ def calc_centroid(mask):
 ##　↑↑↑↑↑↑↑inRangeWrap, calc_centroidは変更しないでください↑↑↑↑↑↑↑
 
 def orange_ball(img):
+    draw_img = img.copy() # 元データを書き換えないようにコピーを作成
+    # HSVに変換
+    hsv_img = cv2.cvtColor(draw_img, cv2.COLOR_BGR2HSV)
+
+    lower = np.array([0, 202, 70]) 
+    upper = np.array([10, 253, 255])
+
+    mask = cv2.inRange(hsv_img, lower, upper)
+    
+    # ノイズ除去（重要）
+    kernel = np.ones((5, 5), np.uint8)
+    mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel)  # 小さな点を消す
+    mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel) # ボールの中の穴を埋める
+
+    try:
+        x, y, s = calc_centroid(mask)
+        print(f"{s=}")
+        return x, y
+    except TypeError:
+        return None
+def d_coke2(img):
     # 画像の読み込み
     draw_img = img.copy() # 元データを書き換えないようにコピーを作成
     # HSVに変換（色指定はRGBよりHSVの方が扱いやすい）
     hsv_img = cv2.cvtColor(draw_img, cv2.COLOR_BGR2HSV)
 
     # BGR空間での抽出範囲
-    ## ボール
-    lower = np.array([15, 100, 100]) # 色相, 彩度, 明度 下限
-    upper = np.array([20, 255, 255]) # 色相, 彩度, 明度 上限
+    ## コーラ缶
+    lower_target = np.array([172, 23, 0])
+    upper_target = np.array([177, 255, 255])
 
     # 指定範囲に入る画素を抽出（白が該当部分）
-    mask = inRangeWrap(hsv_img, lower, upper)
+    mask = inRangeWrap(hsv_img, lower_target, upper_target)
     
+    # ノイズ除去（重要）
+    kernel = np.ones((5, 5), np.uint8)
+    mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel)  # 小さな点を消す
+    mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel) # ボールの中の穴を埋める
+    
+    # 輪郭抽出
+    contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    clean_mask = np.zeros_like(mask) # 計算用のきれいなマスクを作成
+
+    # 有効な物体が見つかったかどうかのフラグ
+    found_valid_obj = False
+
+    if len(contours) > 0:
+        # 一番大きい輪郭を見つける
+        c = max(contours, key=cv2.contourArea)
+        area = cv2.contourArea(c)
+        print(f"DEBUG: Detected area = {area}")
+        # ログのゴミ(s=0.001)は約300~400画素なので、1000画素以下は無視
+        # ログの壁(s=0.16)は約50000画素なので、30000画素以上は無視
+        if area > 500 and area < 100000:
+            # 条件に合うものだけを clean_mask に描画
+            cv2.drawContours(clean_mask, [c], -1, 255, thickness=cv2.FILLED)
+            found_valid_obj = True
+
     try:
-        x, y, s = calc_centroid(mask)
+        x, y, s = calc_centroid(clean_mask)
         print(f"{s=}")
         return x, y
     except TypeError:
@@ -59,14 +104,38 @@ def d_coke(img):
 
     # BGR空間での抽出範囲
     ## コーラ缶
-    lower = np.array([100, 50, 50]) # 色相, 彩度, 明度 下限
-    upper = np.array([0, 255, 255]) # 色相, 彩度, 明度 上限
+    lower_target = np.array([172, 23, 0])
+    upper_target = np.array([177, 255, 255])
 
     # 指定範囲に入る画素を抽出（白が該当部分）
-    mask = inRangeWrap(hsv_img, lower, upper)
+    mask = inRangeWrap(hsv_img, lower_target, upper_target)
     
+    # ノイズ除去（重要）
+    kernel = np.ones((5, 5), np.uint8)
+    mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel)  # 小さな点を消す
+    mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel) # ボールの中の穴を埋める
+    
+    # 輪郭抽出
+    contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    clean_mask = np.zeros_like(mask) # 計算用のきれいなマスクを作成
+
+    # 有効な物体が見つかったかどうかのフラグ
+    found_valid_obj = False
+
+    if len(contours) > 0:
+        # 一番大きい輪郭を見つける
+        c = max(contours, key=cv2.contourArea)
+        area = cv2.contourArea(c)
+        print(f"DEBUG: Detected area = {area}")
+        # ログのゴミ(s=0.001)は約300~400画素なので、1000画素以下は無視
+        # ログの壁(s=0.16)は約50000画素なので、30000画素以上は無視
+        if area > 10000 and area < 100000:
+            # 条件に合うものだけを clean_mask に描画
+            cv2.drawContours(clean_mask, [c], -1, 255, thickness=cv2.FILLED)
+            found_valid_obj = True
+
     try:
-        x, y, s = calc_centroid(mask)
+        x, y, s = calc_centroid(clean_mask)
         print(f"{s=}")
         return x, y
     except TypeError:
@@ -104,21 +173,47 @@ def d_circle(img):
 
 def d_bottle(img):
     # 画像の読み込み
-    draw_img = img.copy() # 元データを書き換えないようにコピーを作成
-    # HSVに変換（色指定はRGBよりHSVの方が扱いやすい）
+    draw_img = img.copy()
+    # HSVに変換
     hsv_img = cv2.cvtColor(draw_img, cv2.COLOR_BGR2HSV)
 
-    # BGR空間での抽出範囲
-    ## プラコップ
-    lower = np.array([170, 0, 20]) # 色相, 彩度, 明度 の下限
-    upper = np.array([180, 0, 200]) # 色相, 彩度, 明度 の上限
+    # 色の閾値設定
+    lower_target = np.array([0, 0, 0])
+    upper_target = np.array([180, 30, 100]) 
 
-    # 指定範囲に入る画素を抽出（白が該当部分）
-    mask = inRangeWrap(hsv_img, lower, upper)
+    # 指定範囲に入る画素を抽出（inRangeWrapを使用）
+    mask = inRangeWrap(hsv_img, lower_target, upper_target)
     
+    # ノイズ処理（モルフォロジー変換）
+    kernel = np.ones((9, 9), np.uint8)
+    mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel)
+    mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)
+
+    # 画面内で一番大きい塊だけを抽出する処理
+    contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    clean_mask = np.zeros_like(mask)
+    
+    if len(contours) > 0:
+        # 面積が一番大きい輪郭を見つける
+        max_cnt = max(contours, key=cv2.contourArea)
+
+        # 【修正】変数名を max_cnt に統一し、一定以上の大きさ（面積500以上）なら採用
+        if cv2.contourArea(max_cnt) > 500: 
+            cv2.drawContours(clean_mask, [max_cnt], -1, 255, thickness=cv2.FILLED)
+        else:
+            # 大きな塊がない場合はNoneを返す
+            return None
+    else:
+        return None
+
     try:
-        x, y, s = calc_centroid(mask)
-        print(f"{s=}")
-        return x, y
+        # ノイズ除去後の clean_mask を使って座標を計算する
+        result = calc_centroid(clean_mask)
+        if result is not None:
+            x, y, s = result
+            print(f"{s=}")
+            return x, y
+        else:
+            return None
     except TypeError:
         return None

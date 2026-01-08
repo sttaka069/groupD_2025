@@ -22,7 +22,7 @@
                     <!-- id_markerからobjectの判定に移るので、判定したいobjectの検出器をセット -->
                     <SetDetector name="set coke_detector" func_name="my_dtcs.d_coke" id="None"/>
                     <!-- watchによるobjectの判定 -->
-                    <JudgeWatch name="watch_marker judgewatch"/> 
+                    <JudgeWatch name="watch_marker judgewatch"/>
                     <!-- id_markerの検出器を再配置(objectから在庫のid判定へ移行)して条件分岐の確認  この時点でTrueが通ります、在庫に移動して補充しましょう-->
                     <SetDetector name="set marker_detector 1" func_name="marker.d_marker" id="[1]"/>
                     <!-- 角度反転して部屋から出る -->
@@ -38,8 +38,24 @@
 
                     <GetObjFront name="goto_stock_front"/>
                     
+                    <!-- 見える位置二移動 -->
+                    <SetDestination name="go_to_coke_view" value="[(1.033, 0.304, 79.4)]"/>
+                    <GoToPose name="go_to_coke_view"/>
                     <!-- 作成したArm_catchの動作を呼び出し、補充動作を実行 -->
-                
+                    <SetDetector name="set coke_detector" func_name="my_dtcs.d_coke2" id="None"/>
+                    <Watch name="watch_coke"/>
+                    <GetObjFront name="get_coke_front"/>
+                    <GoToPose name="move_to_place_loc"/>
+                    <ReachObj name="reach_coke" />
+                    <Pick name="pick"/>
+                    <ObjectLocation name="object_location"/>
+                    <Shift name="shift" target="[0.175]"/>
+                    <Sleep name="sleep" time="[3]"/>
+                    <Fit2 name="fit2" distance="[0.175]"/>
+                    <Close name="close"/>
+                    <ArmHome name="home"/>
+
+                    <!-- ここまで -->
                     <!-- nav_pointの設定である程度aruco_id[1]が映る場所に調整 -->
                     <SetDetector name="set_shelf_return" func_name="marker.d_marker" id="[1]"/>
 
@@ -61,7 +77,8 @@
                     <GoToPose name="adjust_pose_for_put"/>
 
                     <!-- Arm_catchで掴んだobjectを補充場所に配置 -->
-
+                    <Place name="put_action"/>
+                    <ArmHome name="back_home"/>
                     <!-- 補充完了、次のSequenceへ -->
                 </Sequence>
             </FailureIsSuccess>
@@ -89,6 +106,26 @@
                     <Watch name="watch_stock"/>
                     <GetObjFront name="goto_stock_front"/>
                     <!-- 作成したArm_catchの動作を呼び出し、補充動作を実行 -->
+                    
+
+                    <!-- ボール前に移動 -->
+                    <SetDestination name="go_to_ball_view" value="[(2.971, 0.099, 95.5)]"/>
+                    <GoToPose name="go_to_ball_view"/>
+
+                    <SetDetector name="set ball_detector" func_name="my_dtcs.orange_ball" id="None"/>
+                    <Watch name="watch_ball"/>
+                    <GetObjFront name="get_ball_front"/>
+                    <GoToPose name="move_to_place_loc"/>
+                    <ReachObj name="reach_ball" />
+                    <Pick name="pick"/>
+                    <ObjectLocation name="object_location"/>
+                    <Shift name="shift" target="[0.175]"/>
+                    <Sleep name="sleep" time="[3]"/>
+                    <Fit2 name="fit2" distance="[0.175]"/>
+                    <Close name="close"/>
+                    <ArmHome name="home"/>
+
+                    <!-- ここまで -->
                     <SetDetector name="set_shelf_return" func_name="marker.d_marker" id="[2]"/>
                     <SetDestination name="return_to_shelf" value="[(6.5,-4,180)]"/>
                     <GoToPose name="return_to_shelf"/>
@@ -98,6 +135,8 @@
                     <SetDestination name="adjust_pose_for_put" value="[(5,-5,180)]"/>
                     <GoToPose name="adjust_pose_for_put"/>
                     <!-- Arm_catchで掴んだobjectを補充場所に配置 -->
+                    <Place name="place_ball"/>
+                    <ArmHome name="back_home"/>
                 </Sequence>
             </FailureIsSuccess>
             

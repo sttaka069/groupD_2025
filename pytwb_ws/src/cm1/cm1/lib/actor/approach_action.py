@@ -73,7 +73,18 @@ class ApproachAction(SubNet):
 
         while True:
             log = {}
-            _,_,target_angle,distance = self.run_actor('measure_center', target='base_link', assumed=assumed,log=log)
+            # ▼修正：まず結果を変数で受け取る
+            result = self.run_actor('measure_center', target='base_link', assumed=assumed,log=log)
+            
+            # ▼追加：もし見つからなかったら（Noneなら）、安全に停止してループを抜ける
+            if result is None:
+                print("Target lost! Stopping.")
+                self.move(0)
+                f.close()
+                return None # または break
+
+            # ▼修正：中身があることを確認してから取り出す
+            _,_,target_angle,distance = result
             if distance < 0:
                 print('could not get distance value. give up')
                 return
@@ -167,21 +178,18 @@ class ApproachAction(SubNet):
     # adjust location
     @actor
     def reach_coke(self, target=0.28):
-        trans = self.run_actor('map_trans')
-        start = PointEx(0.0, 0.0)
-        start.setTransform(trans.transform)
         target_angle = self.run_actor('targetted_walk', target, "pick_control.csv")
+        if target_angle is None:
+            print("Approach failed: Target lost.")
+            return False
         print(f'target_angle:{degrees(target_angle)}')
         self.run_actor('sleep', 3)
-        trans = self.run_actor('map_trans')
+        trans = self.run_actor('map_trans', 'base_link')
         actual = PointEx(0.0, 0.0)
         actual.setTransform(trans.transform)
-        dx = actual.x - start.x
-        dy = actual.y - start.y
-        dir = atan2(dy, dx)
-        self.run_actor('goto', actual.x, actual.y, dir)
-#        joint = [0.0, 1.75, 1.4, 0.0, -1.6, 0.0]
-#        self.run_actor('move_joint', *joint)
+        rot = trans.transform.rotation
+        _, _, current_dir = euler_from_quaternion((rot.x, rot.y, rot.z, rot.w))
+        self.run_actor('goto', actual.x, actual.y, current_dir)
         return True        
     
     # adjust location by using targetted_walk actor
@@ -190,40 +198,32 @@ class ApproachAction(SubNet):
     #   because distance to the subject is too short. 
     @actor
     def shift(self, target):
-        trans = self.run_actor('map_trans')
-        start = PointEx(0.0, 0.0)
-        start.setTransform(trans.transform)
         target_angle = self.run_actor('targetted_walk_armdown', target, "shift_control.csv", 0.25)
         self.run_actor('sleep', 3)
-        trans = self.run_actor('map_trans')
+        trans = self.run_actor('map_trans', 'base_link')
         actual = PointEx(0.0, 0.0)
         actual.setTransform(trans.transform)
-        dx = actual.x - start.x
-        dy = actual.y - start.y
-        dir = atan2(dy, dx)
-        self.run_actor('goto', actual.x, actual.y, dir)
+        rot = trans.transform.rotation
+        _, _, current_dir = euler_from_quaternion((rot.x, rot.y, rot.z, rot.w))
+        self.run_actor('goto', actual.x, actual.y, current_dir)
 #        self.run_actor('arm_turn', target_angle / 2)
         return True        
 
     # approach subject with visual feedback by using targetted_walk
     @actor
     def approach(self, target=0.20):
-        trans = self.run_actor('map_trans')
-        start = PointEx(0.0, 0.0)
-        start.setTransform(trans.transform)
         self.move(1)
         with self.run_actor_mode('measure_distance', 'iterator', 'bar') as obj_it:
             for distance in obj_it:
                 if distance <= target: break 
         self.move(0)
         self.run_actor('sleep', 1)
-        trans = self.run_actor('map_trans')
+        trans = self.run_actor('map_trans', 'base_link')
         actual = PointEx(0.0, 0.0)
         actual.setTransform(trans.transform)
-        dx = actual.x - start.x
-        dy = actual.y - start.y
-        dir = atan2(dy, dx)
-        self.run_actor('goto', actual.x, actual.y, dir)
+        rot = trans.transform.rotation
+        _, _, current_dir = euler_from_quaternion((rot.x, rot.y, rot.z, rot.w))
+        self.run_actor('goto', actual.x, actual.y, current_dir)
     
     # adjust body angle to face the subject
     @actor

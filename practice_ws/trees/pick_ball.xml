@@ -1,11 +1,11 @@
 <root>
-    <BehaviorTree ID="bt_catch">
-    <Sequence name="main">
-        <SetDetector name="set coke_detector" func_name="my_dtcs.d_coke" id="None"/>
-        <Watch name="watch_coke"/>
-        <GetObjFront name="get_coke_front"/>
+    <BehaviorTree ID="pick_ball">
+    <Sequence name="ball">
+        <SetDetector name="set ball_detector" func_name="my_dtcs.orange_ball" id="None"/>
+        <Watch name="watch_ball"/>
+        <GetObjFront name="get_ball_front"/>
         <GoToPose name="move_to_place_loc"/>
-        <ReachObj name="reach_coke" />
+        <ReachObj name="reach_coke"/>
         <Pick name="pick"/>
         <ObjectLocation name="object_location"/>
         <Shift name="shift" target="[0.175]"/>

@@ -4,6 +4,7 @@ Fit,
 Fit2,distance
 Pick,
 Open,
+Place,
 ArmHome,
 Close,
 Arm0,
